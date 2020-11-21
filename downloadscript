@@ -137,6 +137,7 @@ case "$choise" in
 	rm boot.img
 	./mkbootimg --kernel boot.img-zImage --ramdisk new-boot.img-ramdisk.gz --pagesize "$(cat boot.img-pagesize)" --cmdline "$(cat boot.img-cmdline)" --base "$(cat boot.img-base)" -o boot.img
 	mv boot.img $homepath/zipfiles
+	rm -rf $homepath/boot
 	cd $homepath
 	;;
 
