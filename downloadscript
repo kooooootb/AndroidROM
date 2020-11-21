@@ -139,6 +139,13 @@ case "$choise" in
 	mv boot.img $homepath/zipfiles
 	cd $homepath
 	;;
+
+	"6" )
+	cd $homepath/zipfiles
+	zip -0 -r flash.zip *
+	mv flash.zip ..
+	cd $homepath
+	;;
 esac
 
 script=$(readlink -f "$0")
