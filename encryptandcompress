@@ -1,0 +1,26 @@
+#!/system/bin/sh
+
+#script should be started befoor shutdown or reboot
+#it compresses current /data folder and encrypt it
+#then it swaps encrypted folder and empty /data folder and reboots
+
+echo "start compress process"
+if  [[ $(< /raw/data/multiboot/status) == "changed" ]]; then
+umount -l /data
+echo "data unmounted"
+mv /raw/data/multiboot/data-slot-1/data /raw/data/multiboot/temp
+echo "dualdata moved, prepairing tar-process"
+tar -cpzf /raw/data/multiboot/temp/data.tar -C /raw/data/multiboot/temp/ data
+echo "tar-process finished, going to 7z"
+rm -r /raw/data/multiboot/temp/data.7z
+7z a /raw/data/multiboot/temp/data.7z /raw/data/multiboot/temp/data.tar -pqwe
+echo "7z finished, deleting origins and rebooting"
+rm -r /raw/data/multiboot/temp/data
+rm -r /raw/data/multiboot/temp/data
+rm /raw/data/multiboot/temp/data.tar
+echo "" > /raw/data/multiboot/status
+mv /raw/data/multiboot/data /raw/data/multiboot/data-slot-1/
+echo "rebooting in 5 sec..."
+sleep 5
+reboot
+fi

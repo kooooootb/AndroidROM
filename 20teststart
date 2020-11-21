@@ -1,0 +1,16 @@
+#!/system/bin/sh
+
+#recreates md5 checksum in /data/hashsumcheck 
+#if it does not compare to hashsumafter it rebootes device
+
+if [ -e /data/hashsumcheck ]; then
+rm /data/hashsumcheck
+fi
+
+find /system -type f -exec md5sum {} \; | sort -k 2 | md5sum >> /data/hashsumcheck
+
+if cmp -s /data/hashsumcheck /data/hashsumafter ; then
+ echo "Nichego ne pomenyalos'    $(date +"%d-%m-%Y %r" )" >> /data/totalkey.log
+ else 
+	reboot
+fi

@@ -1,0 +1,5 @@
+#!/system/bin/sh
+
+#script to test init.d function and write boot time in /data/Logintime.log
+
+echo "executed on $(date +"%d-%m-%Y %r" )" >> /data/Logintime.log

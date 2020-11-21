@@ -1,0 +1,9 @@
+#!/system/bin/sh
+
+if [ -e /data/Test.log ]; then
+rm /data/Test.log
+fi
+
+echo "executed on $(date +"%d-%m-%Y %r" )" >> /data/Testafter.log
+echo "Yra Eta horoshaya mashina Zarabotala Blin Eeeeeee Yra Yra Yra Da Da" >> /data/Testafter.log
+

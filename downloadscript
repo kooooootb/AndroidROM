@@ -1,0 +1,145 @@
+#!/bin/bash
+
+echo "Java version OpenJDK 1.8 is required"
+echo "your phone must be connected via USB and ADB should be enabled"
+echo "press key to select download stage"
+echo "1 - download android sources and vendor files"
+echo "2 - compile ROM from sources"
+echo "3 - unpack ROM for editing"
+echo "4 - edit system partition"
+echo "5 - edit boot partition"
+echo "6 - repack ROM file"
+echo "7 - exit script"
+
+read choise
+homepath=$(pwd)
+
+case "$choise" in
+	"7" )
+	exit
+	;;
+
+	"1" )
+	model=$(adb shell getprop ro.product.name)
+	echo "is $model correct device's codename? (yes|no)"
+	read namever
+	case "$namevar" in
+		"y" | "yes" )
+		;;
+
+		"n" | "no" )
+		echo "write correctly your device's codename"
+		read model
+		;;
+	esac
+
+	sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev android-tools-adb android-tools-fastboot
+	mkdir lineage
+	cd lineage
+	curl https://storage.googleapis.com/git-repo-downloads/repo > repo
+	chmod a+x repo
+	source ~/.profile
+	./repo init -u https://github.com/LineageOS/android.git -b lineage-15.1
+	./repo sync
+	sudo source build/envsetup.sh
+	breakfast $model | grep "Looking for dependencies in device/" | grep "/$model" > qweqweqwe
+	sed "s/Looking for dependencies in /""/" qweqweqwe -i
+	devicepath=$(cat qweqweqwe)
+	cd $devicepath
+	sudo ./extract-files.sh
+	cd $homepath/lineage
+	./repo sync --force-sync
+	breakfast $model
+	cd $homepath
+	;;
+
+	"2" )
+	model=$(adb shell getprop ro.product.name)
+	echo "is $model correct device's codename? (yes|no)"
+	read namever
+	case "$namevar" in
+		"y" | "yes" )
+		;;
+
+		"n" | "no" )
+		echo "write correctly your device's codename"
+		read model
+		;;
+	esac
+
+	cd $homepath/lineage
+	sudo source build/envsetup.sh
+	croot
+	breakfast $model
+	brunch $model
+
+	cd $OUT
+	cp *.zip $homepath/rom.zip
+	cd $homepath
+	;;
+
+	"3" )
+	mkdir zipfiles
+	unzip rom.zip -d $homepath/zipfiles
+	brotli -d system.new.dat.br
+	rm -rf system.new.dat.br
+	;;
+
+	"4" )
+	mkdir systemfiles
+	mv $homepath/zipfiles/system.transfer.list $homepath/zipfiles/system.new.dat $homepath/systemfiles
+	cd systemfiles
+	wget https://github.com/xpirt/sdat2img/raw/master/sdat2img.py
+	chmod +x sdat2img.py
+	./sdat2img.py system.transfer.list system.new.dat system.img
+	mkdir mnt
+	sudo mount -t ext4 -o loop system.img mnt
+	sudo cp $homepath/10testafter $homepath/unifiedscript $homepath/10teststart $homepath/decryptandcompress $homepath/encryptandcompress $homepath/logintime $homepath/rebootseq $homepath/shutdownseq $homepath/storageremount mnt
+	sudo cp $homepath/firstscript mnt/etc/init.d
+	sudo rm -r $homepath/systemfiles/mnt/xbin
+	sudo tar -xpf $homepath/xbin.tar -C $homepath/systemfiles/mnt/
+
+	sudo apt-get install android-tools-fsutils
+	img2simg system.img system_snew.img
+	rm -rf system.new.dat
+	rm -rf system.transfer.list
+	wget https://github.com/xpirt/img2sdat/raw/master/img2sdat.py
+	wget https://github.com/xpirt/img2sdat/raw/master/blockimgdiff.py
+	wget https://github.com/xpirt/img2sdat/raw/master/common.py
+	wget https://github.com/xpirt/img2sdat/raw/master/rangelib.py
+	wget https://github.com/xpirt/img2sdat/raw/master/sparse_img.py
+	chmod +x img2sdat.py
+	./img2sdat.py system_snew.img
+	brotli system.new.dat
+	mv system.new.dat.br system.transfer.files ../zipfiles
+	cd $homepath
+	;;
+
+	"5" )
+	mkdir boot
+	mv $homepath/zipfiles/boot.img $homepath/boot
+	cd $homepath/boot
+	wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-serialport-api/android_bootimg_tools.tar.gz	
+	tar -xpf android_bootimg_tools.tar.gz
+	rm android_bootimg_tools.tar.gz
+	./unpackbootimg -i boot.img
+	mkdir ./ramdisk
+	cd ./ramdisk/
+	gzip -dc ../boot.img-ramdisk.gz | cpio -imd
+	echo "service sysinit /system/bin/logwrapper /system/xbin/busybox run-parts /system/etc/init.d" >> init.rc
+	echo "    class late_start" >> init.rc
+	echo "    user root" >> init.rc
+	echo "    group root" >> init.rc
+	echo "    oneshot" >> init.rc
+	echo "" >> init.rc
+	find . ! -name . | LC_ALL=C sort | cpio -o -H newc -R root:root | gzip > ../new-boot.img-ramdisk.gz
+	cd ..
+	rm boot.img
+	./mkbootimg --kernel boot.img-zImage --ramdisk boot.img-ramdisk.gz --pagesize "$(cat boot.img-pagesize)" --cmdline "$(cat boot.img-cmdline)" --base "$(cat boot.img-base)" -o boot.img
+	mv boot.img $homepath/zipfiles
+	cd $homepath
+	;;
+esac
+
+script=$(readlink -f "$0")
+exec "$script"

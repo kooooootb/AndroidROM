@@ -1,0 +1,15 @@
+#!/system/bin/sh
+
+#script  checks if folder is corporate
+#if not it decompress corporate archive and swaps current /data folder and decompressed /data folder
+#then it reboots device
+
+if  [[ $(< /raw/data/multiboot/status) != "changed" ]]; then
+umount -l /data
+mv /raw/data/multiboot/data-slot-1/data /raw/data/multiboot
+7z x /raw/data/multiboot/temp/data.7z -o"/raw/data/multiboot/data-slot-1" -ppassword
+tar -xpzf /raw/data/multiboot/data-slot-1/data.tar -C /raw/data/multiboot/data-slot-1
+rm /raw/data/multiboot/data-slot-1/data.tar
+echo "changed" > /raw/data/multiboot/status
+reboot
+fi

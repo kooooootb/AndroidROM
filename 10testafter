@@ -1,0 +1,12 @@
+#!/system/bin/sh
+
+#recreates md5 checksum in /data/hashsumafter before reboot
+
+if [ -e /data/hashsumafter ]; then
+rm /data/hashsumafter
+fi
+
+find /system -type f -exec md5sum {} \; | sort -k 2 | md5sum >> /data/hashsumafter
+
+grep -f /data/hashsumcheck -vFx /data/hashsumafter > /data/razhica
+

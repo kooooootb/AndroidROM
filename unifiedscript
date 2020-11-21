@@ -1,0 +1,9 @@
+#!/system/bin/sh
+
+sh /system/decryptanddecompress
+
+sh /system/30teststart
+
+sh /system/storageremount
+
+sh /system/logintime

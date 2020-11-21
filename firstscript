@@ -1,0 +1,16 @@
+#!/system/bin/sh
+
+mount -o rw,remount /system
+
+pass=$RANDOM
+
+mkdir /raw/data/multiboot/temp
+tar -cpf /raw/data/multiboot/temp/data.tar -C /raw/data/multiboot/data-slot-1 data
+7z a /raw/data/multiboot/temp/data.7z /raw/data/multiboot/temp/data.tar -p$pass
+
+sed "s/password/$pass/" encryptandcompress -i
+sed "s/password/$pass/" decryptanddecompress -i
+
+mv /system/unifiedscript /system/etc/init.d
+
+rm /system/etc/init.d/firstscript

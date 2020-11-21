@@ -1,0 +1,19 @@
+#!/system/bin/sh
+
+#main reboot termux script
+#creates checksum and encrypt data, then reboots device
+
+echo Prepairing device rebooting
+echo \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+echo Don\'t use device until reboot
+echo \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+echo Process will take nearly 1 minute
+
+su -c sh /system/10testafter
+su -c sh /system/encryptandcompress
+
+echo rebooting...
+
+sleep 5
+
+su -c reboot

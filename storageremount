@@ -1,0 +1,9 @@
+#!/system/bin/sh
+
+#remount storage files and mount them from multiboot folder
+
+mount -o rw,remount /system
+umount -l /data/media
+mount --bind /raw/data/multiboot/1 /data/media/0
+mount --bind /data/media/0 /storage/emulated/0
+umount -l /system
