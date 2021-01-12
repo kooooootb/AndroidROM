@@ -94,7 +94,7 @@ case "$choise" in
 	./sdat2img.py system.transfer.list system.new.dat system.img
 	mkdir mnt
 	sudo mount -t ext4 -o loop system.img mnt
-	sudo cp $homepath/10testafter $homepath/unifiedscript $homepath/10teststart $homepath/decryptandcompress $homepath/encryptandcompress $homepath/logintime $homepath/rebootseq $homepath/shutdownseq $homepath/storageremount mnt
+	sudo cp $homepath/10testafter $homepath/unifiedscript $homepath/20teststart $homepath/decryptandcompress $homepath/encryptandcompress $homepath/logintime $homepath/rebootseq $homepath/shutdownseq $homepath/storageremount $homepath/bashrc $homepath/changepassword $homepath/settingsswitcher mnt
 	sudo cp $homepath/firstscript mnt/etc/init.d
 	sudo rm -r $homepath/systemfiles/mnt/xbin
 	sudo tar -xpf $homepath/xbin.tar -C $homepath/systemfiles/mnt/

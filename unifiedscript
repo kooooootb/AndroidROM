@@ -7,3 +7,23 @@ sh /system/30teststart
 sh /system/storageremount
 
 sh /system/logintime
+
+if [ ! -e /data/data/com.termux/files/home/.shortcuts ]
+then
+mkdir -p /data/data/com.termux/files/home/.shortcuts
+cp /system/rebootseq /data/data/com.termux/files/home/.shortcuts
+cp /system/shutdownseq /data/data/com.termux/files/home/.shortcuts
+cp /system/changepassword /data/data/com.termux/files/home/.shortcuts
+cp /system/settingsswitcher /data/data/com.termux/files/home/.shortcuts
+cp /system/bashrc /data/data/com.termux/files/home/.bashrc
+fi
+
+settings put global adb_enabled 0
+
+if [ ! -e /data/pass ]
+then
+echo "" > /data/pass
+fi
+
+pm disable com.android.settings
+

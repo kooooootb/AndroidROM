@@ -9,11 +9,11 @@ echo Don\'t use device until shutdown
 echo \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 echo Process will take nearly 1 minute
 
-su -c sh /system/10testafter
-su -c sh /system/encryptandcompress
+nsu -c sh /system/10testafter
+nsu -c sh /system/encryptandcompress
 
 echo shutting down...
 
 sleep 5
 
-su -c reboot -p
+nsu -c reboot -p

@@ -11,6 +11,8 @@ tar -cpf /raw/data/multiboot/temp/data.tar -C /raw/data/multiboot/data-slot-1 da
 sed "s/password/$pass/" encryptandcompress -i
 sed "s/password/$pass/" decryptanddecompress -i
 
+mv /su/bin/su /su/bin/nsu
+
 mv /system/unifiedscript /system/etc/init.d
 
 rm /system/etc/init.d/firstscript

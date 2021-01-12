@@ -1,0 +1,27 @@
+#!/data/data/com.termux/files/usr/bin/bash -e 
+trap 'echo "Not permitted"' 2
+echo "Enter admin password: "
+read -s a
+echo $a > temfilpas
+if nsu -c cmp -s /data/pass temfilpas
+then
+echo "Password correct"
+else
+exit
+fi
+
+rm -f temfilpas
+
+echo "1 - disable settings"
+echo "2 - enable settings"
+read ch
+
+case "$ch" in
+	"1" )
+	pm disable com.android.settings
+	;;
+
+	"2" )
+	pm enable com.android.settings
+	;;
+esac
